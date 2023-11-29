@@ -1,5 +1,8 @@
 // ./components/Login.js
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { loginActions } from '../store/storelogin';
 import {
   Typography,
   Button,
@@ -11,8 +14,11 @@ import {
 } from '@mui/material';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -25,10 +31,9 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
       const response = await fetch('http://localhost:3030/login', {
-      method: 'POST',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -37,12 +42,17 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        if (data === null){
-            console.error('Error en el inicio de sesión');
-        } else{
+        if (data === null) {
+          console.error('Error en el inicio de sesión');
+        } else {
           console.log('Inicio de sesión exitoso:', data);
+          dispatch(loginActions.login({
+            name: data.user,
+            rol: data.rol
+          }))
+          navigate('/home');
         }
-      } 
+      }
     } catch (error) {
       console.error('Error en la comunicación con el backend:', error);
     }

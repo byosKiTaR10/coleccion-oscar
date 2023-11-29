@@ -4,6 +4,9 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Provider } from 'react-redux'
+import store from './store/index'
+
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 const darkTheme = createTheme({
   palette: {
@@ -27,7 +30,9 @@ root.render(
   <React.StrictMode>
     <CssBaseline />
     <ThemeProvider theme={darkTheme}>
-      <App /> 
+      <Provider store={store}>
+        <App />
+      </Provider>
     </ThemeProvider>
   </React.StrictMode>
 );
