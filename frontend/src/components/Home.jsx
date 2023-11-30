@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginActions } from '../store/storelogin';
@@ -9,11 +9,19 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+
 import { Link } from 'react-router-dom';
 import {
     Box,
     Paper,
-    TextField
+    TableCell,
+    TextField,
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableBody
 } from '@mui/material'
 const Home = () => {
     const navigate = useNavigate();
@@ -27,7 +35,6 @@ const Home = () => {
     const userData = useSelector(state => state.login);
     const isLoggedin = userData.isAutenticated;
     const username = userData.userName;
-    const rol = userData.userRol;
 
     const handleNombreChange = (event) => {
         setNombre(event.target.value);
@@ -43,13 +50,42 @@ const Home = () => {
     const handlePrecioChange = (event) => {
         setPrecio(event.target.value);
     };
+    const handleTabla = useCallback(() => {
+        try {
+            fetch('http://localhost:3030/getItems')
+                .then(response => {
+                    // Verificar si la solicitud fue exitosa (código de estado 200-299)
+                    if (!response.ok) {
+                        throw new Error(`Error de red: ${response.status}`);
+                    }
+                    // Parsear la respuesta como JSON
+                    return response.json();
+                })
+                .then(data => {
+                    // Manejar los datos obtenidos
+                    setTableData(data.data)
+                    // Aquí puedes realizar cualquier operación que necesites con los datos
+                })
+                .catch(error => {
+                    // Manejar errores de red o errores en la respuesta
+                    console.error('Error en la solicitud:', error);
+                });
+        } catch (err) {
+            console.error("Error obteniendo datos de la tabla")
+        }
+    }, [])
+
     // Efecto para verificar la autenticación al cargar la página
     useEffect(() => {
         if (!isLoggedin) {
             // Si no está autenticado, navegar a la página de inicio de sesión
             navigate('/')
+            
         }
     }, [isLoggedin, navigate]);
+    useEffect(() => {
+        handleTabla()
+    }, [handleTabla]) 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -61,31 +97,33 @@ const Home = () => {
                 body: JSON.stringify({ nombre, marca, tipo, precio })
             });
             if (response.ok) {
-                console.alert("Inserción de datos correcta");
+                alert("Inserción de datos correcta");
+                handleTabla()
             }
         } catch (err) {
             console.error("Error en la comunicación con el backend: ", err)
         }
     }
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('http://localhost:3030/getItems');
-                if (!response.ok) {
-                    throw new Error('Error al obtener los datos');
-                }
+    const handleDeleteItem = async (row) => {
+        try {
+            const response = await fetch(`http://localhost:3030/deleteItem?id=${row.id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
+            if (response.ok) {
                 const data = await response.json();
-                // Supongamos que la respuesta es un objeto con una propiedad 'data' que contiene los datos de la tabla
-                setTableData(data.data);
-            } catch (error) {
-                console.error('Error en la solicitud GET:', error.message);
-                // Puedes manejar el error según tus necesidades
+                handleTabla()
+                console.log('Datos eliminados:', data);
+            } else {
+                console.error('Error al intentar eliminar los datos');
             }
-        };
-
-        fetchData();
-    }, []);
+        } catch (err) {
+            console.error('Error en la comunicación con el backend', err);
+        }
+    }
 
     // Manejar el logout
     const handleLogout = () => {
@@ -173,30 +211,33 @@ const Home = () => {
                     </Grid>
                 </Box>
             </Paper>
-            <TableContainer>
-                <Table aria-label='Productos'>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell></TableCell>
-                            .
-                            .
-                            .
-                            <TableCell></TableCell>
+                            <TableCell>Nombre</TableCell>
+                            <TableCell align="right">Marca</TableCell>
+                            <TableCell align="right">Tipo</TableCell>
+                            <TableCell align="right">Precio</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {tableData.map((row) => (
-                            <TableRow key={row.id}>
-                                <TableCell>
-                                    <Button onClick={() => handleDeleteItem(row.id)}>
+                            <TableRow
+                                key={row.nombre}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    <Button onClick={() => handleDeleteItem(row)}>
                                         <DeleteForeverIcon />
                                     </Button>
+                                    {row.nombre}
                                 </TableCell>
-                                <TableCell>{row.nombre}</TableCell>
-
+                                <TableCell align="right">{row.marca}</TableCell>
+                                <TableCell align="right">{row.tipo}</TableCell>
+                                <TableCell align="right">{row.precio}</TableCell>
                             </TableRow>
                         ))}
-
                     </TableBody>
                 </Table>
             </TableContainer>
