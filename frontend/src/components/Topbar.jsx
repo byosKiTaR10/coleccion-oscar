@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { Tooltip } from '@mui/material';
 
 const Topbar = () => {
+    const pdfPath = process.env.PUBLIC_URL + '/Ojeda_Suárez_Óscar_EXUT4_Manual.pdf';
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const userData = useSelector(state => state.login);
@@ -56,7 +57,7 @@ const Topbar = () => {
                                     <Link to='/Informes' style={{ color: 'white' }}>Informes</Link>
                                 </Grid>}
                             <Grid item xs={2} md={2} lg={2}>
-                                <Link to='/' style={{ color: 'white' }}>Ayuda</Link>
+                                <a href={pdfPath} target="_blank" rel="noopener noreferrer" style={{ color: 'white' }}>Ayuda</a>
                             </Grid>
                             <Grid item xs={2} md={2} lg={3}>
                                 <Tooltip title="Cerrar sesión" arrow>
