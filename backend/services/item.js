@@ -23,7 +23,6 @@ async function deleteData(req, res) {
     const result = await db.query(
         'DELETE FROM coleccion WHERE id = ?',
         [data.id]
-
     )
     return result.affectedRows
 }
