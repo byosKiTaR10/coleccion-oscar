@@ -1,7 +1,7 @@
 import Topbar from "./Topbar";
 import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
-import { Grid } from "@mui/material";
+import { Grid, Tooltip } from "@mui/material";
 import InformeColeccion from "./InformeColeccion";
 const Informes = () => {
     const [tableData, setTableData] = useState([]);
@@ -44,6 +44,7 @@ const Informes = () => {
             <Topbar />
             {!mostrarInforme ?
                 <Grid container alignItems="center">
+                    <Tooltip title="Mostrar Informe de la tabla" arrow>
                     <Button
                         style={{ display: 'block', margin: 'auto' }}
                         variant='contained'
@@ -51,6 +52,7 @@ const Informes = () => {
                     >
                         Informe Colección
                     </Button>
+                    </Tooltip>
                 </Grid>:
                  <div>
                     <InformeColeccion tableData={tableData}/>

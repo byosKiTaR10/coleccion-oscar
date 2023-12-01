@@ -14,7 +14,8 @@ import {
     Table,
     TableHead,
     TableRow,
-    TableBody
+    TableBody,
+    Tooltip
 } from '@mui/material'
 const Home = () => {
     const navigate = useNavigate();
@@ -168,9 +169,11 @@ const Home = () => {
                             </TextField>
                         </Grid>
                         <Grid item xs={2} md={1.5}>
+                            <Tooltip title="Insertar datos en la tabla" arrow>
                             <Button type="submit" variant="contained">
                                 Insertar
                             </Button>
+                            </Tooltip>
                         </Grid>
                     </Grid>
                 </Box>
@@ -193,9 +196,11 @@ const Home = () => {
                             >
                                 <TableCell component="th" scope="row">
                                     {rol !== 'user' &&
+                                        <Tooltip title="Eliminar elemento" arrow>
                                         <Button onClick={() => handleDeleteItem(row)}>
                                             <DeleteForeverIcon />
                                         </Button>
+                                        </Tooltip>
                                     }
                                     {row.nombre}
                                 </TableCell>

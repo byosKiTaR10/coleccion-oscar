@@ -10,7 +10,8 @@ import {
   Paper,
   Box,
   TextField,
-  Avatar
+  Avatar,
+  Tooltip
 } from '@mui/material';
 
 const Login = () => {
@@ -88,9 +89,11 @@ const Login = () => {
             />
 
             <Box mt={2}>
+              <Tooltip title="Iniciar sesión" arrow>
               <Button type="submit" variant="contained" color="primary" fullWidth>
                 Iniciar sesión
               </Button>
+              </Tooltip>
             </Box>
           </form>
         </Paper>

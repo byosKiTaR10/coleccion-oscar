@@ -12,6 +12,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AdbIcon from '@mui/icons-material/Adb'
 
 import { Link } from 'react-router-dom';
+import { Tooltip } from '@mui/material';
 
 const Topbar = () => {
     const navigate = useNavigate();
@@ -58,7 +59,9 @@ const Topbar = () => {
                                 <Link to='/' style={{ color: 'white' }}>Ayuda</Link>
                             </Grid>
                             <Grid item xs={2} md={2} lg={3}>
+                                <Tooltip title="Cerrar sesión" arrow>
                                 <Button variant='contained' onClick={handleLogout}>Salir</Button>
+                                </Tooltip>
                             </Grid>
                         </Grid>
                     </Toolbar>
